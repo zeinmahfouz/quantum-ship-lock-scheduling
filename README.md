@@ -18,7 +18,7 @@
 
 ## Abstract
 
-This project investigates the application of quantum computing techniques to solve complex maritime scheduling problems. Specifically, I address the ship lock scheduling problem—a constrained optimization challenge with significant real-world implications for maritime transportation efficiency. The implementation employs a hybrid quantum-classical approach using the Quantum Approximate Optimization Algorithm (QAOA) to optimize vessel placement within canal locks under multiple constraints including vessel dimensions, priority levels, and lock capacities.
+This Project investigates the application of quantum computing techniques to solve complex maritime scheduling problems. Specifically, I address the ship lock scheduling problem—a constrained optimization challenge with significant real-world implications for maritime transportation efficiency. The implementation employs a hybrid quantum-classical approach using the Quantum Approximate Optimization Algorithm (QAOA) to optimize vessel placement within canal locks under multiple constraints including vessel dimensions, priority levels, and lock capacities.
 
 The solution demonstrates how Quadratic Unconstrained Binary Optimization (QUBO) formulations can effectively represent maritime scheduling constraints as a maximization problem, and how quantum algorithms can potentially outperform classical approaches for these NP-hard problems. Experimental results show significant improvements in solution quality and computational feasibility compared to classical heuristic methods.
 
@@ -52,6 +52,17 @@ The ship lock scheduling problem involves optimizing the placement of vessels wi
 - **Ship characteristics**: Each ship has predefined length, width, and waiting time (priority)
 - **Ship value calculation**: `ship_values = ship_widths + alpha * waiting_times` where `alpha = 0.5`
 
+**Mathematical Formulation:**
+```
+Maximize ∑ Sy(i)·xi
+subject to ∑ Sx(i)·xi ≤ Lx
+```
+Where:
+- Sx(i) is the length of ship i
+- Sy(i) is the width of ship i
+- xi is a binary decision variable (1 if selected, 0 otherwise)
+- Lx is the lock length
+
 Key challenges include:
 - Heterogeneous vessel dimensions
 - Priority-based scheduling requirements
@@ -68,7 +79,7 @@ QAOA represents a hybrid quantum-classical algorithm designed to find approximat
 - A problem Hamiltonian encoding the cost function
 - A mixing Hamiltonian that facilitates exploration of the solution space
 
-The algorithm parameters are optimized classically to maximize the probability of measuring optimal or near-optimal solutions.
+The algorithm parameters are optimized classically to maximize the probability of measuring optimal or near-optimal solutions. QAOA is particularly well-suited for NISQ (Noisy Intermediate-Scale Quantum) devices due to its relatively shallow circuit depth.
 
 ### Quadratic Unconstrained Binary Optimization (QUBO)
 
@@ -81,6 +92,16 @@ Our implementation adapts this framework for maximization, specifically:
 $\max \sum_{i,k} x_{i,k} \cdot v_i$
 
 where $x_{i,k}$ represents the assignment of ship $i$ to lock $k$, and $v_i$ is the value of ship $i$ (derived from its width and waiting time). Constraints are incorporated through penalty terms in the objective function. This formulation is particularly suitable for quantum optimization approaches, as it maps directly to the Ising model used in quantum hardware.
+
+**Our QUBO Objective Function:**
+```
+max ∑ sy(i)xi - C1(∑ sx(i)xi - ∑ kyk)² - C2(1 - ∑ yk)²
+```
+
+This formulation includes:
+- Maximization of ship values
+- Capacity constraints with penalty C1
+- Slack validation with penalty C2
 
 ## Methodology
 
@@ -107,7 +128,7 @@ A key innovation in this work is the virtual lock division strategy, which decom
 
 ## Implementation
 
-The solution is implemented using Python with quantum computing libraries
+The solution is implemented using Python with quantum computing libraries:
 
 The main algorithm flow is handled by the `hybrid_lock_filling()` function, which orchestrates the optimization process and manages the virtual lock division. The implementation leverages the myQLM environment for quantum simulation, allowing for efficient execution and analysis of the QAOA algorithm's performance.
 
@@ -151,8 +172,7 @@ pip install -r requirements.txt
 For quantum simulation capabilities, additional setup may be required:
 
 ```bash
-pip install myqlm-interop[all]
-
+pip install qat-lang qat-core
 ```
 
 ## Dependencies
@@ -164,7 +184,7 @@ pip install myqlm-interop[all]
   - qat.lang.AQASM: For quantum circuit construction
   - qat.qpus: For quantum processing unit simulation
   - qat.core: For core quantum functionality
-- **myQLM Tools**: Eviden Quantum Learning Machine Software Development for enhanced quantum simulation
+- **myQLM SDK**: Eviden Quantum Learning Machine Software Development Kit for enhanced quantum simulation
   - Provides noise models for realistic quantum hardware simulation
   - Enables performance analysis and benchmarking
   - Offers optimization tools for QAOA parameter tuning
@@ -185,7 +205,7 @@ The implementation leverages the integration between PyQUBO's problem formulatio
 
 6. Eviden. (2023). myQLM: High-performance quantum simulator. *Eviden Science/Computing*.
 
-7. https://myqlm.github.io/01_getting_started.html.
+7. https://myqlm.github.io/01_getting_started.html
 
 ---
 
