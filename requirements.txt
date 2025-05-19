@@ -1,0 +1,6 @@
+matplotlib
+numpy
+pyqubo
+qat-lang>=1.0.0
+qat-core>=1.0.0
+jupyter>=1.0.0
